@@ -410,9 +410,27 @@ const DateTimePicker = (
     (selectedDate: DateType) => {
       if (onChange) {
         if (mode === 'single') {
-          const newDate = timePicker
+          let newDate = timePicker
             ? dayjs.tz(selectedDate, timeZone)
             : dayjs.tz(getStartOfDay(selectedDate), timeZone);
+
+          // Clamp to min/max — upstream doesn't do this for time-wheel
+          // selections (issue #198), so out-of-range values leak through
+          // onChange.
+          if (
+            newDate &&
+            maxDate &&
+            dayjs.tz(newDate, timeZone).isAfter(maxDate)
+          ) {
+            newDate = dayjs.tz(maxDate, timeZone);
+          }
+          if (
+            newDate &&
+            minDate &&
+            dayjs.tz(newDate, timeZone).isBefore(minDate)
+          ) {
+            newDate = dayjs.tz(minDate, timeZone);
+          }
 
           dispatch({
             type: CalendarActionKind.CHANGE_CURRENT_DATE,
@@ -539,7 +557,7 @@ const DateTimePicker = (
         }
       }
     },
-    [mode, timePicker, min, max, timeZone]
+    [mode, timePicker, min, max, minDate, maxDate, timeZone]
   );
 
   // set the active displayed month
