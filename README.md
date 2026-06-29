@@ -11,6 +11,8 @@
 
 </div>
 
+> **Note:** This is a fork of [`react-native-ui-datepicker`](https://github.com/farhoudshapouran/react-native-ui-datepicker) by Farhoud Shapouran, published as [`@danielsenorjan/react-native-ui-datepicker`](https://www.npmjs.com/package/@danielsenorjan/react-native-ui-datepicker) with additional fixes. Install with `npm install @danielsenorjan/react-native-ui-datepicker`. All credit for the original library goes to the upstream author.
+
 DateTimePicker component for React Native that allows you to create a customizable datetime picker. The component uses extensive set of props that allows you to customizing the calendar based on your own UI design. Please visit [demo](https://farhoudshapouran.github.io/react-native-ui-datepicker/).
 
 ## Features
