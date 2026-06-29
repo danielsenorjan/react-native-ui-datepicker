@@ -56,6 +56,12 @@ const WheelPicker: React.FC<Props> = ({
   flatListProps = {},
 }) => {
   const momentumStarted = useRef(false);
+  // Gate onChange on a user-initiated drag. The FlatList emits
+  // onMomentumScrollEnd for programmatic `scrollToIndex` calls and for the
+  // `initialScrollIndex` layout pass too, which would otherwise fire
+  // onChange(0) and clobber the displayed value on mount / view transitions.
+  // See upstream issues #169 and #171.
+  const userScrollActive = useRef(false);
   const selectedIndex = options.findIndex((item) => item.value === value);
 
   const flatListRef = useRef<FlatList>(null);
@@ -98,6 +104,10 @@ const WheelPicker: React.FC<Props> = ({
     }
   };
 
+  const handleScrollBeginDrag = () => {
+    userScrollActive.current = true;
+  };
+
   const handleMomentumScrollBegin = () => {
     momentumStarted.current = true;
   };
@@ -106,6 +116,8 @@ const WheelPicker: React.FC<Props> = ({
     event: NativeSyntheticEvent<NativeScrollEvent>
   ) => {
     momentumStarted.current = false;
+    if (!userScrollActive.current) return;
+    userScrollActive.current = false;
     handleScrollEnd(event);
   };
 
@@ -119,7 +131,12 @@ const WheelPicker: React.FC<Props> = ({
     setTimeout(() => {
       // If momentum scroll hasn't started within the timeout,
       // then it was a slow scroll that won't trigger momentum
-      if (!momentumStarted.current && offsetY !== undefined) {
+      if (
+        !momentumStarted.current &&
+        offsetY !== undefined &&
+        userScrollActive.current
+      ) {
+        userScrollActive.current = false;
         // Create a synthetic event with just the data we need
         const syntheticEvent = {
           nativeEvent: {
@@ -142,15 +159,18 @@ const WheelPicker: React.FC<Props> = ({
   }, [selectedIndex, options]);
 
   /**
-   * If selectedIndex is changed from outside (not via onChange) we need to scroll to the specified index.
-   * This ensures that what the user sees as selected in the picker always corresponds to the value state.
+   * Keep the physical scroll position in lockstep with `value`. We run this
+   * on every render (no dep array) rather than on `selectedIndex` changes
+   * only — when the parent clamps a user's out-of-range scroll back to the
+   * previous value, `selectedIndex` stays the same but the user's momentum
+   * has moved the FlatList off-position, and dep-gated effects miss it.
    */
   useEffect(() => {
-    flatListRef.current?.scrollToIndex({
-      index: selectedIndex,
+    flatListRef.current?.scrollToOffset({
+      offset: selectedIndex * itemHeight,
       animated: Platform.OS === 'ios',
     });
-  }, [selectedIndex, itemHeight]);
+  });
 
   return (
     <View
@@ -178,6 +198,7 @@ const WheelPicker: React.FC<Props> = ({
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
         )}
+        onScrollBeginDrag={handleScrollBeginDrag}
         onScrollEndDrag={handleScrollEndDrag}
         onMomentumScrollBegin={handleMomentumScrollBegin}
         onMomentumScrollEnd={handleMomentumScrollEnd}
