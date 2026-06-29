@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import { useCalendarContext } from '../calendar-context';
 import Wheel from './time-picker/wheel';
-import { CONTAINER_HEIGHT } from '../enums';
-import { getParsedDate, formatNumber } from '../utils';
+import { CONTAINER_HEIGHT, MAX_FONT_SCALE } from '../enums';
+import { getParsedDate, formatNumber, getFontScale } from '../utils';
 import { Numerals, PickerOption } from '../types';
 import dayjs from 'dayjs';
 import PeriodPicker from './time-picker/period-picker';
@@ -95,12 +95,17 @@ const TimePicker = () => {
     [date, currentDate, onSelectDate, timeZone, hour, hour12]
   );
 
+  // Widen the reel column with the OS font-scale setting so the scaled digits
+  // have room to fit on one line instead of being truncated to "1…".
+  const { fontScale } = getFontScale();
+
   const timePickerContainerStyle: ViewStyle = useMemo(
     () => ({
       ...defaultStyles.timePickerContainer,
+      width: (CONTAINER_HEIGHT / 2) * fontScale,
       flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     }),
-    [I18nManager.isRTL]
+    [I18nManager.isRTL, fontScale]
   );
 
   const timePickerTextStyle: TextStyle = useMemo(
@@ -125,7 +130,11 @@ const TimePicker = () => {
             classNames={classNames}
           />
         </View>
-        <Text style={timePickerTextStyle} className={classNames?.time_label}>
+        <Text
+          style={timePickerTextStyle}
+          className={classNames?.time_label}
+          maxFontSizeMultiplier={MAX_FONT_SCALE}
+        >
           :
         </Text>
         <View style={defaultStyles.wheelContainer}>

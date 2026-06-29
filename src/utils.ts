@@ -11,7 +11,25 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRef } from 'react';
 import { isEqual } from 'lodash';
+import { PixelRatio } from 'react-native';
 import { numeralSystems } from './numerals';
+import { MAX_FONT_SCALE } from './enums';
+
+/**
+ * Returns the OS font-scale accessibility setting clamped to
+ * `[1, MAX_FONT_SCALE]` for sizing the picker's fixed-geometry controls (the
+ * time wheels and the weekday row), together with the matching
+ * `maxFontSizeMultiplier` so the text and the box that holds it grow in
+ * lockstep. Read once when the control renders — like the rest of the picker
+ * it does not re-scale if the setting changes while the picker is mounted.
+ */
+export const getFontScale = () => {
+  const fontScale = Math.min(
+    Math.max(PixelRatio.getFontScale(), 1),
+    MAX_FONT_SCALE
+  );
+  return { fontScale, maxFontSizeMultiplier: MAX_FONT_SCALE };
+};
 
 export const CALENDAR_FORMAT = 'YYYY-MM-DD HH:mm';
 export const DATE_FORMAT = 'YYYY-MM-DD';

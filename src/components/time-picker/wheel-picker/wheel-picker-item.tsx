@@ -10,6 +10,7 @@ interface ItemProps {
   style: StyleProp<ViewStyle>;
   option: PickerOption | null;
   height: number;
+  maxFontSizeMultiplier?: number;
   index: number;
   currentScrollIndex: Animated.AnimatedAddition<number>;
   visibleRest: number;
@@ -23,6 +24,7 @@ const WheelPickerItem: React.FC<ItemProps> = ({
   textClassName,
   style,
   height,
+  maxFontSizeMultiplier,
   option,
   index,
   visibleRest,
@@ -129,7 +131,12 @@ const WheelPickerItem: React.FC<ItemProps> = ({
         },
       ]}
     >
-      <Text style={textStyle} className={textClassName}>
+      <Text
+        style={textStyle}
+        className={textClassName}
+        numberOfLines={1}
+        maxFontSizeMultiplier={maxFontSizeMultiplier}
+      >
         {option?.text}
       </Text>
     </Animated.View>

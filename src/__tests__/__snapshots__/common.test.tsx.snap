@@ -304,7 +304,7 @@ exports[`COMMON TESTS should render with default options 1`] = `
             Object {
               "alignItems": "center",
               "flexDirection": "row",
-              "height": 25,
+              "height": 38,
             },
             undefined,
           ]
@@ -323,7 +323,10 @@ exports[`COMMON TESTS should render with default options 1`] = `
             ]
           }
         >
-          <Text>
+          <Text
+            maxFontSizeMultiplier={1.5}
+            numberOfLines={1}
+          >
             Su
           </Text>
         </View>
@@ -339,7 +342,10 @@ exports[`COMMON TESTS should render with default options 1`] = `
             ]
           }
         >
-          <Text>
+          <Text
+            maxFontSizeMultiplier={1.5}
+            numberOfLines={1}
+          >
             Mo
           </Text>
         </View>
@@ -355,7 +361,10 @@ exports[`COMMON TESTS should render with default options 1`] = `
             ]
           }
         >
-          <Text>
+          <Text
+            maxFontSizeMultiplier={1.5}
+            numberOfLines={1}
+          >
             Tu
           </Text>
         </View>
@@ -371,7 +380,10 @@ exports[`COMMON TESTS should render with default options 1`] = `
             ]
           }
         >
-          <Text>
+          <Text
+            maxFontSizeMultiplier={1.5}
+            numberOfLines={1}
+          >
             We
           </Text>
         </View>
@@ -387,7 +399,10 @@ exports[`COMMON TESTS should render with default options 1`] = `
             ]
           }
         >
-          <Text>
+          <Text
+            maxFontSizeMultiplier={1.5}
+            numberOfLines={1}
+          >
             Th
           </Text>
         </View>
@@ -403,7 +418,10 @@ exports[`COMMON TESTS should render with default options 1`] = `
             ]
           }
         >
-          <Text>
+          <Text
+            maxFontSizeMultiplier={1.5}
+            numberOfLines={1}
+          >
             Fr
           </Text>
         </View>
@@ -419,7 +437,10 @@ exports[`COMMON TESTS should render with default options 1`] = `
             ]
           }
         >
-          <Text>
+          <Text
+            maxFontSizeMultiplier={1.5}
+            numberOfLines={1}
+          >
             Sa
           </Text>
         </View>

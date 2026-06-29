@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { getWeekdays } from '../utils';
+import { getWeekdays, getFontScale } from '../utils';
 import {
   Styles,
   ClassNames,
@@ -30,9 +30,12 @@ const Weekdays = ({
   components = {},
   isRTL,
 }: WeekdaysProps) => {
+  // Grow the row with the OS font-scale setting so scaled labels are not
+  // clipped by the fixed row height; cap the text at the same bound.
+  const { fontScale, maxFontSizeMultiplier } = getFontScale();
   const style = useMemo(
-    () => createDefaultStyles(weekdaysHeight, isRTL),
-    [weekdaysHeight, isRTL]
+    () => createDefaultStyles(Math.round(weekdaysHeight * fontScale), isRTL),
+    [weekdaysHeight, fontScale, isRTL]
   );
 
   return (
@@ -53,6 +56,8 @@ const Weekdays = ({
             <Text
               style={styles?.weekday_label}
               className={classNames.weekday_label}
+              numberOfLines={1}
+              maxFontSizeMultiplier={maxFontSizeMultiplier}
             >
               {weekday.name[weekdaysFormat]}
             </Text>

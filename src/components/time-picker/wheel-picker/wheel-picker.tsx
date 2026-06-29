@@ -15,6 +15,7 @@ import {
 import styles from './wheel-picker.style';
 import WheelPickerItem from './wheel-picker-item';
 import { PickerOption } from '../../../types';
+import { getFontScale } from '../../../utils';
 
 interface Props {
   value: number | string;
@@ -46,7 +47,7 @@ const WheelPicker: React.FC<Props> = ({
   itemTextStyle = {},
   selectedIndicatorClassName = '',
   itemTextClassName = '',
-  itemHeight = 40,
+  itemHeight: baseItemHeight = 40,
   scaleFunction = (x: number) => 1.0 ** x,
   rotationFunction = (x: number) => 1 - Math.pow(1 / 2, x),
   opacityFunction = (x: number) => Math.pow(1 / 3, x),
@@ -63,6 +64,14 @@ const WheelPicker: React.FC<Props> = ({
   // See upstream issues #169 and #171.
   const userScrollActive = useRef(false);
   const selectedIndex = options.findIndex((item) => item.value === value);
+
+  // Grow each row with the OS font-scale setting so scaled digits stay fully
+  // visible. The whole wheel geometry below is derived from `itemHeight`, so
+  // scaling this single value keeps the snap offsets, indicator and item
+  // transforms internally consistent. `maxFontSizeMultiplier` caps the text at
+  // the same bound, keeping the digit and its row in lockstep.
+  const { fontScale, maxFontSizeMultiplier } = getFontScale();
+  const itemHeight = Math.round(baseItemHeight * fontScale);
 
   const flatListRef = useRef<FlatList>(null);
   const [scrollY] = useState(new Animated.Value(selectedIndex * itemHeight));
@@ -222,6 +231,7 @@ const WheelPicker: React.FC<Props> = ({
             style={itemStyle}
             textStyle={itemTextStyle}
             textClassName={itemTextClassName}
+            maxFontSizeMultiplier={maxFontSizeMultiplier}
             height={itemHeight}
             currentScrollIndex={currentScrollIndex}
             scaleFunction={scaleFunction}
